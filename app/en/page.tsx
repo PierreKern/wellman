@@ -8,7 +8,10 @@ export default function HomeEN() {
 
   return (
     <main className="relative flex flex-col items-center justify-center h-screen">
-      <button onClick={() => router.push("/")} className="absolute top-5 right-5 text-sm underline text-gray-600 hover:text-gray-900">
+      <button
+        onClick={() => router.push("/")}
+        className="absolute top-5 right-5 text-sm underline text-gray-600 hover:text-gray-900"
+      >
         🇫🇷 Version française
       </button>
 
@@ -24,8 +27,10 @@ export default function HomeEN() {
 
       <div className="flex flex-col lg:flex-row items-start gap-16 mt-20">
         <div className="flex flex-col items-center gap-5">
-          <button onClick={() => (window.location.href = "https://indorama-logistique.square-com.fr/tab-logistique/")}
-            className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors">
+          <button
+            onClick={() => (window.location.href = "/en/logistique")}
+            className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors"
+          >
             Logistic
             <p className="text-lg mt-2">Loading / Unloading</p>
           </button>
@@ -39,7 +44,10 @@ export default function HomeEN() {
         </div>
 
         <div className="flex flex-col items-center gap-5">
-          <button onClick={() => (window.location.href = "https://indorama.square-com.fr/tab-accueil/")} className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors">
+          <button
+            onClick={() => (window.location.href = "/en/autre")}
+            className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors"
+          >
             Others
             <p className="text-lg mt-2">
               Construction, external company, deliverers

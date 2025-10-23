@@ -8,7 +8,10 @@ export default function HomeFR() {
 
   return (
     <main className="relative flex flex-col items-center justify-center h-screen">
-      <button onClick={() => router.push("/en")} className="absolute top-5 right-5 text-sm underline text-gray-600 hover:text-gray-900">
+      <button
+        onClick={() => router.push("/en")}
+        className="absolute top-5 right-5 text-m underline text-gray-600 hover:text-gray-900"
+      >
         🇬🇧 English version
       </button>
 
@@ -24,8 +27,10 @@ export default function HomeFR() {
 
       <div className="flex flex-col lg:flex-row items-start gap-16 mt-20">
         <div className="flex flex-col items-center gap-5">
-          <button onClick={() => (window.location.href = "https://indorama-logistique.square-com.fr/tab-logistique/")}
-            className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors">
+          <button
+            onClick={() => (window.location.href = "/logistique")}
+            className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors"
+          >
             Logistique
             <p className="text-lg mt-2">Chargement / Déchargement</p>
           </button>
@@ -39,8 +44,10 @@ export default function HomeFR() {
         </div>
 
         <div className="flex flex-col items-center gap-5">
-          <button onClick={() => (window.location.href = "https://indorama.square-com.fr/tab-accueil/")}
-            className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors">
+          <button
+            onClick={() => (window.location.href = "/autre")}
+            className="w-[500px] h-[200px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex flex-col justify-center items-center text-center transition-colors"
+          >
             Autres
             <p className="text-lg mt-2">
               Travaux, entreprise extérieure, livreurs...
