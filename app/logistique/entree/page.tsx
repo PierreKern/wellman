@@ -14,7 +14,7 @@ export default function LogistiqueSlider() {
     dechargement: "/EN_obligation_dechargement.png",
     depotage: "/FR_obligations_acces.png",
     quai: "/FR_obligations_dechargement.png",
-    expedition: "/FR_obligations_dechargemen.png",
+    expedition: "/FR_obligations_dechargement.png",
   };
   const postChoiceCommonImages = [
     "/FR_obligations_chauffeur.png",
