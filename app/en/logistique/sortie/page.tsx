@@ -58,7 +58,7 @@ export default function HomeFR() {
               name="nom"
               value={formData.nom}
               onChange={handleChange}
-              placeholder="Nom"
+              placeholder="Last name"
               required
               className={inputStyle}
             />
@@ -67,7 +67,7 @@ export default function HomeFR() {
               name="prenom"
               value={formData.prenom}
               onChange={handleChange}
-              placeholder="Prénom"
+              placeholder="First name"
               required
               className={inputStyle}
             />
@@ -78,7 +78,7 @@ export default function HomeFR() {
             name="entreprise"
             value={formData.entreprise}
             onChange={handleChange}
-            placeholder="Nom de l'entreprise"
+            placeholder="Company's name"
             required
             className={inputStyle}
           />
@@ -104,7 +104,7 @@ export default function HomeFR() {
                 onClick={handleClear}
                 className="w-full p-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
               >
-                EFFACER
+                CLEAR
               </button>
             </div>
 
@@ -118,7 +118,7 @@ export default function HomeFR() {
                     : "bg-[#1864ab] hover:bg-[#1c7ed6] text-white"
                 }`}
               >
-                {loading ? "Envoi..." : "ENVOYER"}
+                {loading ? "Sending..." : "SEND"}
               </button>
             </div>
           </div>
