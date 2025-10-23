@@ -27,7 +27,7 @@ export default function LogistiquePage() {
 
       <div className="flex flex-col lg:flex-row items-center gap-16 mt-20">
         <button
-          onClick={() => (window.location.href = "/")}
+          onClick={() => (window.location.href = "/en/logistique/entree")}
           className="w-[400px] h-[180px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-semibold flex flex-col justify-center items-center transition-colors"
         >
           Entry

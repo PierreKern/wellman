@@ -5,21 +5,21 @@ import Image from "next/image";
 
 export default function LogistiqueSlider() {
   const introImages = [
-    "/FR_iso.png",
-    "/FR_interdictions.png",
-    "/FR_obligations.png",
+    "/EN_iso.png",
+    "/EN_regles_secu.png",
+    "/EN_obligations.png",
   ];
   const [reason, setReason] = useState<string | null>(null);
   const postChoiceImagesByReason: Record<string, string> = {
     dechargement: "/EN_obligation_dechargement.png",
-    depotage: "/FR_obligations_acces.png",
-    quai: "/FR_obligations_dechargement.png",
-    expedition: "/FR_obligations_dechargemen.png",
+    depotage: "/EN_obligations_acces.png",
+    quai: "/EN_obligation_dechargement.png",
+    expedition: "/EN_obligation_dechargement.png",
   };
   const postChoiceCommonImages = [
-    "/FR_obligations_chauffeur.png",
-    "/FR_deversement.png",
-    "/FR_plan_circulation.png"
+    "/EN_obligations_chauffeur.png",
+    "/EN_deversement.png",
+    "/EN_plan_circulation.png"
   ];
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<"intro" | "choix" | "postChoice" | "form">("intro");
@@ -90,15 +90,15 @@ export default function LogistiqueSlider() {
         {phase === "choix" && (
           <div className="flex flex-col items-center gap-6">
             <h2 className="text-2xl font-bold text-center text-gray-800">
-              Merci de sélectionner la raison de votre présence sur site
+              Please select the reason for your visit to the site.
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { id: "dechargement", img: "/dechargement.png", label: "Chargement/Déchargement camion" },
-                { id: "depotage", img: "/granule.jpg", label: "Dépotage granulé" },
-                { id: "quai", img: "/quai.jpg", label: "Déchargement à quai" },
-                { id: "expedition", img: "/expedition.png", label: "Déchargement/Expédition produits chimiques/déchets dangereux" },
+                { id: "dechargement", img: "/dechargement.png", label: "Truck loading/unloading" },
+                { id: "depotage", img: "/granule.jpg", label: "Granule unloading" },
+                { id: "quai", img: "/quai.jpg", label: "Unloading at the dock" },
+                { id: "expedition", img: "/expedition.png", label: "Unloading/Shipping Chemicals/Hazardous Waste" },
               ].map((r) => (
                 <button
                   key={r.id}

@@ -12,3 +12,25 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Logistic {
+  firsName String,
+  lastName String,
+  company String,
+  selectedOption String,
+  tractorRegistration String,
+  trailerRegistration String,
+  dateEntree DateTime @default(now())
+}
+
+model Others {
+  firstName String,
+  lastName String,
+  company String
+  telephone String
+  dateEntree DateTime @default(now())
+  distanceParcourue Int,
+  energie String,
+  nbrPersonnes Int,
+  personneAContacter String,
+}
