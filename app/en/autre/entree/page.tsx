@@ -107,7 +107,7 @@ export default function HomeFR() {
         ) : (
           <>
             <h2 className="text-2xl text-black font-bold mb-4 text-center">
-              Please fill out this form 
+              Please fill out this form :
             </h2>
 
             <div className="max-w-3xl w-full mx-auto p-8 md:p-10 bg-white rounded-lg shadow-xl">
