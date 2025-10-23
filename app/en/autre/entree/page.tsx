@@ -43,6 +43,7 @@ export default function HomeFR() {
     distance: "",
     energie: "",
     puissanceFiscale: "",
+    immatriculation: ""
   });
 
   const handleNext = () => {
@@ -160,6 +161,16 @@ export default function HomeFR() {
                   onChange={handleChange}
                   placeholder="Number of people present"
                   min="1"
+                  required
+                  className={inputStyle}
+                />
+
+                <input
+                  type="text"
+                  name="immatriculation"
+                  value={formData.immatriculation}
+                  onChange={handleChange}
+                  placeholder="Registration number"
                   required
                   className={inputStyle}
                 />
