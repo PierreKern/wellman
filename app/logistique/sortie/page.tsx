@@ -2,44 +2,61 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import SignatureCanvas from "react-signature-canvas";
+import { useRouter } from "next/navigation";
 
-export default function HomeFR() {
+export default function LogistiqueSortieForm() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    nom: "",
-    prenom: "",
-    entreprise: "",
+    firstName: "",
+    lastName: "",
+    tractorRegistration: "",
   });
-  const [loading, setLoading] = useState(false);
-  const sigPadRef = useRef<SignatureCanvas | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const sigCanvas = useRef<SignatureCanvas | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const handleClear = (): void => {
-    sigPadRef.current?.clear();
-  };
+
+  const clearSignature = () => sigCanvas.current?.clear();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (sigPadRef.current?.isEmpty()) {
-      alert("Veuillez signer le formulaire.");
+    if (!sigCanvas.current || sigCanvas.current.isEmpty()) {
+      alert("Veuillez signer avant de soumettre.");
       return;
     }
-    const signatureImage = sigPadRef.current!
-      .getTrimmedCanvas()
-      .toDataURL("image/png");
-    const payload = { ...formData, signature: signatureImage };
-    console.log("Données du formulaire :", payload);
+
+    setIsSubmitting(true);
+    const signature = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+
+    try {
+      const res = await fetch("/api/logistic/sortie", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, signature }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        router.push("/");
+      } else {
+        alert(data.error || "Erreur lors de l'envoi.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur de connexion au serveur.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const inputStyle =
-    "w-full p-3 border border-gray-300 rounded-md bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500";
-
   return (
-    <main className="relative flex flex-col items-center justify-start min-h-screen bg-gray-50 pt-40 pb-20">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4">
       <div className="absolute top-10 left-1/2 -translate-x-1/2">
         <Image
           src="/indorama.jpeg"
@@ -49,81 +66,53 @@ export default function HomeFR() {
           className="object-contain"
         />
       </div>
+      <h2 className="text-black text-lg mt-4">Merci de remplir le formulaire :</h2>
+      <form onSubmit={handleSubmit} className="w-[320px] space-y-4 mt-6">
+        <input
+          name="firstName"
+          placeholder="Nom"
+          onChange={handleChange}
+          className="border p-2 w-full text-black"
+          required
+        />
+        <input
+          name="lastName"
+          placeholder="Prénom"
+          onChange={handleChange}
+          className="border p-2 w-full text-black"
+          required
+        />
+        <input
+          name="tractorRegistration"
+          placeholder="Immat. tracteur"
+          onChange={handleChange}
+          className="border p-2 w-full text-black"
+          required
+        />
 
-      <div className="max-w-3xl w-full mx-auto p-8 bg-white rounded-lg shadow-xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              type="text"
-              name="nom"
-              value={formData.nom}
-              onChange={handleChange}
-              placeholder="Nom"
-              required
-              className={inputStyle}
-            />
-            <input
-              type="text"
-              name="prenom"
-              value={formData.prenom}
-              onChange={handleChange}
-              placeholder="Prénom"
-              required
-              className={inputStyle}
-            />
-          </div>
-
-          <input
-            type="text"
-            name="entreprise"
-            value={formData.entreprise}
-            onChange={handleChange}
-            placeholder="Nom de l'entreprise"
-            required
-            className={inputStyle}
+        <div className="border p-2 rounded bg-white">
+          <SignatureCanvas
+            ref={sigCanvas}
+            penColor="black"
+            canvasProps={{ className: "border w-full h-[150px] text-black" }}
           />
+          <button
+            type="button"
+            onClick={clearSignature}
+            className="text-blue-600 mt-2"
+          >
+            Effacer
+          </button>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Signature
-              </label>
-              <div className="w-full h-[200px] bg-gray-50 border border-gray-300 rounded-md overflow-hidden">
-                <SignatureCanvas
-                  ref={sigPadRef}
-                  penColor="black"
-                  canvasProps={{
-                    width: 500,
-                    height: 200,
-                    className: "w-full h-full",
-                  }}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleClear}
-                className="w-full p-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
-              >
-                EFFACER
-              </button>
-            </div>
-
-            <div className="flex items-end h-full">
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full h-[50px] rounded-md text-lg font-semibold transition-colors ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-[#1864ab] hover:bg-[#1c7ed6] text-white"
-                }`}
-              >
-                {loading ? "Envoi..." : "ENVOYER"}
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="bg-[#1864ab] text-white w-full py-2 rounded"
+        >
+          {isSubmitting ? "Envoi..." : "Envoyer"}
+        </button>
+      </form>
     </main>
   );
 }

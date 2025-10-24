@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import SignatureCanvas from "react-signature-canvas";
+import { useRouter } from "next/navigation";
 
 export default function LogistiqueSlider() {
+  const router = useRouter();
   const introImages = ["/FR_iso.png", "/FR_interdictions.png", "/FR_obligations.png"];
-
-  const [reason, setReason] = useState<string | null>(null);
   const postChoiceImagesByReason: Record<string, string> = {
     dechargement: "/EN_obligation_dechargement.png",
     depotage: "/FR_obligations_acces.png",
@@ -21,16 +21,26 @@ export default function LogistiqueSlider() {
   ];
 
   const [index, setIndex] = useState(0);
-  const [phase, setPhase] = useState<"intro" | "choix" | "postChoice" | "form">("intro");
-
+  const [phase, setPhase] = useState<"intro" | "choix" | "postChoice" | "form" | "success">("intro");
+  const [reason, setReason] = useState<string | null>(null);
   const sigCanvas = useRef<SignatureCanvas | null>(null);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    company: "",
+    tractorRegistration: "",
+    trailerRegistration: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (submitted) router.push("/");
+  }, [submitted, router]);
 
   const handleNextIntro = () => {
     if (index < introImages.length - 1) setIndex(index + 1);
-    else {
-      setPhase("choix");
-      setIndex(0);
-    }
+    else setPhase("choix");
   };
 
   const handleSelectReason = (r: string) => {
@@ -52,21 +62,40 @@ export default function LogistiqueSlider() {
 
   const clearSignature = () => sigCanvas.current?.clear();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const signatureData = sigCanvas.current?.toDataURL();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const data = Object.fromEntries(formData.entries());
+    if (!sigCanvas.current || sigCanvas.current.isEmpty()) {
+      alert("Veuillez signer avant de soumettre.");
+      return;
+    }
 
-    console.log("📝 Formulaire envoyé :", data);
-    console.log("✍️ Signature base64 :", signatureData);
+    setIsSubmitting(true);
+    const signature = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
 
-    alert("Formulaire soumis avec succès !");
+    try {
+      const res = await fetch("/api/logistic/entree", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, selectedOption: reason, signature }),
+      });
+      const data = await res.json();
+      if (data.success) setSubmitted(true);
+      else alert("Erreur lors de l'envoi.");
+    } catch (error) {
+      console.error(error);
+      alert("Erreur de connexion au serveur.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <main className="relative flex flex-col items-center justify-center min-h-screen p-4">
-      {/* Logo */}
+    <main className="flex flex-col items-center justify-center min-h-screen p-4">
       <div className="absolute top-10 left-1/2 -translate-x-1/2">
         <Image
           src="/indorama.jpeg"
@@ -77,138 +106,80 @@ export default function LogistiqueSlider() {
         />
       </div>
 
-      <div className="flex flex-col items-center gap-8 mt-20 w-full max-w-5xl">
-        {/* === PHASE INTRO === */}
-        {phase === "intro" && (
-          <>
-            <div className="relative w-full flex justify-center">
-              <Image
-                key={introImages[index]}
-                src={introImages[index]}
-                alt={`Intro ${index + 1}`}
-                width={900}
-                height={600}
-                className="max-w-full max-h-[70vh] object-contain rounded-xl shadow-lg transition-all duration-500"
-              />
-            </div>
-            <button
-              onClick={handleNextIntro}
-              className="w-[150px] h-[50px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex justify-center items-center transition-colors"
-            >
-              Suivant
+      {phase === "intro" && (
+        <>
+          <Image
+            key={introImages[index]}
+            src={introImages[index]}
+            alt=""
+            width={900}
+            height={600}
+            className="object-contain rounded-xl shadow-lg"
+          />
+          <button onClick={handleNextIntro} className="bg-[#1864ab] text-white rounded-xl px-6 py-2 mt-4">
+            Suivant
+          </button>
+        </>
+      )}
+
+      {phase === "choix" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {[
+            { id: "dechargement", img: "/dechargement.png", label: "Chargement/Déchargement" },
+            { id: "depotage", img: "/granule.jpg", label: "Dépotage granulé" },
+            { id: "quai", img: "/quai.jpg", label: "Déchargement à quai" },
+            { id: "expedition", img: "/expedition.png", label: "Expédition produits dangereux" },
+          ].map(r => (
+            <button key={r.id} onClick={() => handleSelectReason(r.id)}
+              className="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition-transform">
+              <Image src={r.img} alt={r.label} width={250} height={180} className="object-contain" />
+              <p className="mt-2 font-semibold text-black">{r.label}</p>
             </button>
-          </>
-        )}
+          ))}
+        </div>
+      )}
 
-        {/* === PHASE CHOIX === */}
-        {phase === "choix" && (
-          <div className="flex flex-col items-center gap-6">
-            <h2 className="text-2xl font-bold text-center text-gray-800">
-              Merci de sélectionner la raison de votre présence sur site
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { id: "dechargement", img: "/dechargement.png", label: "Chargement/Déchargement camion" },
-                { id: "depotage", img: "/granule.jpg", label: "Dépotage granulé" },
-                { id: "quai", img: "/quai.jpg", label: "Déchargement à quai" },
-                { id: "expedition", img: "/expedition.png", label: "Déchargement/Expédition produits chimiques/déchets dangereux" },
-              ].map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => handleSelectReason(r.id)}
-                  className="flex flex-col items-center bg-white rounded-xl shadow-lg p-4 hover:scale-105 transition-transform max-w-[280px] mx-auto"
-                >
-                  <div className="relative w-full h-54">
-                    <Image src={r.img} alt={r.label} fill className="object-contain" />
-                  </div>
-                  <p className="mt-2 text-lg font-semibold text-black text-center">{r.label}</p>
-                </button>
-              ))}
-            </div>
+      {phase === "postChoice" && reason && (
+        <>
+          <Image
+            key={getPostChoiceImage()}
+            src={getPostChoiceImage()}
+            alt=""
+            width={900}
+            height={600}
+            className="object-contain rounded-xl shadow-lg mt-4"
+          />
+          <button onClick={handleNextPostChoice} className="bg-[#1864ab] text-white rounded-xl px-6 py-2 mt-4">
+            Suivant
+          </button>
+        </>
+      )}
+
+      {phase === "form" && (
+        <form onSubmit={handleSubmit} className="w-[420px] space-y-4 mt-6">
+          <h2 className="text-2xl font-bold mb-6 text-center text-black">
+            Merci de remplir ce formulaire :
+          </h2>
+          <input name="firstName" placeholder="Nom" onChange={handleChange} className="border p-2 w-full text-black" required />
+          <input name="lastName" placeholder="Prénom" onChange={handleChange} className="border p-2 w-full text-black" required />
+          <input name="company" placeholder="Entreprise" onChange={handleChange} className="border p-2 w-full text-black" required />
+          <input name="tractorRegistration" placeholder="Immat. tracteur" onChange={handleChange} className="border p-2 w-full text-black" required />
+          <input name="trailerRegistration" placeholder="Immat. remorque" onChange={handleChange} className="border p-2 w-full text-black" required />
+
+          <div className="border p-2 rounded bg-white">
+            <SignatureCanvas ref={sigCanvas} penColor="black" canvasProps={{ className: "border w-full h-[150px] text-black" }} />
+            <button type="button" onClick={clearSignature} className="text-blue-600 mt-2">Effacer</button>
           </div>
-        )}
 
-        {/* === PHASE POST-CHOICE === */}
-        {phase === "postChoice" && reason && (
-          <>
-            <div className="relative w-full max-w-4xl h-64 sm:h-96 md:h-[60vh] flex justify-center items-center">
-              <Image
-                key={getPostChoiceImage()}
-                src={getPostChoiceImage()}
-                alt={`Post-choice ${index + 1}`}
-                fill
-                className="object-contain rounded-xl shadow-lg transition-all duration-500"
-              />
-            </div>
-            <button
-              onClick={handleNextPostChoice}
-              className="w-[150px] h-[50px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-medium flex justify-center items-center transition-colors"
-            >
-              Suivant
-            </button>
-          </>
-        )}
+          <button type="submit" disabled={isSubmitting} className="bg-[#1864ab] text-white w-full py-2 rounded">
+            {isSubmitting ? "Envoi..." : "Envoyer"}
+          </button>
+        </form>
+      )}
 
-        {/* === PHASE FORM === */}
-        {phase === "form" && (
-          <div className="text-center w-full max-w-lg">
-            <h2 className="text-2xl text-black font-bold mb-4">Merci, veuillez remplir le formulaire :</h2>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-              <input type="text" name="nom" placeholder="Nom" className="border text-black rounded p-2" required />
-              <input type="text" name="prenom" placeholder="Prénom" className="border text-black rounded p-2" required />
-              <input
-                type="text"
-                name="entreprise"
-                placeholder="Nom de l’entreprise"
-                className="border text-black rounded p-2"
-                required
-              />
-              <input
-                type="text"
-                name="tracteur"
-                placeholder="Immatriculation tracteur"
-                className="border text-black rounded p-2"
-                required
-              />
-              <input
-                type="text"
-                name="remorque"
-                placeholder="Immatriculation remorque"
-                className="border text-black rounded p-2"
-                required
-              />
-
-              <div className="flex flex-col items-center border rounded p-3 bg-white">
-                <p className="font-medium text-black mb-2">Signature :</p>
-                <SignatureCanvas
-                  ref={sigCanvas}
-                  penColor="black"
-                  backgroundColor="white"
-                  canvasProps={{
-                    className: "border border-gray-400 rounded bg-gray-50 w-[300px] h-[150px]",
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={clearSignature}
-                  className="mt-2 text-sm text-blue-600 hover:underline"
-                >
-                  Effacer la signature
-                </button>
-              </div>
-
-              <p className="text-gray-600 mt-2">Raison : {reason}</p>
-
-              <button
-                type="submit"
-                className="bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl py-2 transition-colors"
-              >
-                Envoyer
-              </button>
-            </form>
-          </div>
-        )}
-      </div>
+      {phase === "success" && (
+        <div className="text-green-600 text-xl font-bold mt-4">Enregistré avec succès !</div>
+      )}
     </main>
   );
 }
