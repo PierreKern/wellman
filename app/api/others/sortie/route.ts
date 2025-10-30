@@ -13,7 +13,10 @@ function calculateTempsPasse(dateEntree: Date, dateSortie: Date) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { firstName, lastName, company } = body;
+    const firstName = body.firstName?.trim().toUpperCase() ?? "";
+    const lastName = body.lastName?.trim().toUpperCase() ?? "";
+    const company = body.company?.trim().toUpperCase() ?? "";
+
     const otherEntry = await prisma.others.findFirst({
       where: {
         firstName,
@@ -38,8 +41,7 @@ export async function POST(req: Request) {
       data: {
         dateSortie,
         tempsPasse,
-        // @ts-ignore
-        signature: body.signature
+        signature: body.signature,
       },
     });
 

@@ -75,14 +75,14 @@ export default function LogistiqueSortieForm() {
         <h2 className="text-black text-lg text-center font-bold">Merci de remplir le formulaire :</h2>
         <input
           name="firstName"
-          placeholder="Nom"
+          placeholder="Prénom"
           onChange={handleChange}
           className="border p-2 w-full text-black"
           required
         />
         <input
           name="lastName"
-          placeholder="Prénom"
+          placeholder="Nom"
           onChange={handleChange}
           className="border p-2 w-full text-black"
           required

@@ -14,8 +14,9 @@ function calculateTempsPasse(dateEntree: Date, dateSortie: Date) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
-    const { firstName, lastName, tractorRegistration } = body;
+    const firstName = body.firstName?.trim().toUpperCase() ?? "";
+    const lastName = body.lastName?.trim().toUpperCase() ?? "";
+    const tractorRegistration = body.tractorRegistration?.trim().toUpperCase() ?? "";
     const logisticEntry = await prisma.logistic.findFirst({
       where: {
         firstName,

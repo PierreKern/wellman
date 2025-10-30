@@ -14,14 +14,14 @@ export default function LoginPage() {
     
     const res = await signIn("credentials", {
       redirect: false,
-      email,  // Changed from username
+      email,
       password,
     });
 
     if (res?.error) {
       setError("Identifiants incorrects");
     } else {
-      router.push("/admin");
+      router.push("/admin/logistique");
     }
   };
 
@@ -33,10 +33,10 @@ export default function LoginPage() {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="email"  // Changed from "text"
-            placeholder="Email"  // Changed placeholder
-            value={email}  // Changed from username
-            onChange={(e) => setEmail(e.target.value)}  // Changed setter
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             className="w-full p-3 border border-gray-300 rounded-md text-black"
           />
