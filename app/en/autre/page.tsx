@@ -9,10 +9,10 @@ export default function AutresPage() {
   return (
     <main className="relative flex flex-col items-center justify-center h-screen">
       <button
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/en")}
         className="absolute top-5 left-5 text-sm underline text-gray-600 hover:text-gray-900"
       >
-        ← Retour
+        ← Back
       </button>
 
       <div className="absolute top-10 left-1/2 -translate-x-1/2">
