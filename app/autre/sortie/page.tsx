@@ -30,7 +30,7 @@ export default function OthersSortieForm() {
     if (!nom || !prenom || !entreprise) return alert("Veuillez remplir tous les champs.");
     if (sigPadRef.current?.isEmpty()) return alert("Veuillez signer le formulaire.");
 
-    const signatureImage = sigPadRef.current!.getTrimmedCanvas().toDataURL("image/png");
+    const signatureImage = sigPadRef.current!.toDataURL("image/png");
 
     setLoading(true);
     try {

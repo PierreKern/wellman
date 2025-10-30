@@ -14,17 +14,14 @@ function calculateTempsPasse(dateEntree: Date, dateSortie: Date) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
     const { firstName, lastName, company } = body;
-
-    // On récupère la dernière entrée correspondante
     const otherEntry = await prisma.others.findFirst({
       where: {
         firstName,
         lastName,
         company,
       },
-      orderBy: { dateEntree: "desc" }, // prend la plus récente
+      orderBy: { dateEntree: "desc" },
     });
 
     if (!otherEntry) {
@@ -40,9 +37,10 @@ export async function POST(req: Request) {
     const updatedEntry = await prisma.others.update({
       where: { id: otherEntry.id },
       data: {
-        // @ts-ignore
         dateSortie,
         tempsPasse,
+        // @ts-ignore
+        signature: body.signature
       },
     });
 

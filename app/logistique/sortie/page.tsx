@@ -11,6 +11,7 @@ export default function LogistiqueSortieForm() {
     firstName: "",
     lastName: "",
     tractorRegistration: "",
+    signature: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const sigCanvas = useRef<SignatureCanvas | null>(null);
@@ -31,7 +32,7 @@ export default function LogistiqueSortieForm() {
     }
 
     setIsSubmitting(true);
-    const signature = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+    const signature = sigCanvas.current.toDataURL("image/png");
 
     try {
       const res = await fetch("/api/logistic/sortie", {

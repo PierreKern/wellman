@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import SignatureCanvas from "react-signature-canvas";
 
 const CONTACTS_WELLMAN = [
   "BREDARD Sébastien",
@@ -32,7 +31,6 @@ export default function OthersFormSlider() {
 
   const [index, setIndex] = useState(0);
   const [showForm, setShowForm] = useState(false);
-  const sigPadRef = useRef<SignatureCanvas | null>(null);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -61,23 +59,15 @@ export default function OthersFormSlider() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleClear = () => sigPadRef.current?.clear();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sigPadRef.current || sigPadRef.current.isEmpty()) {
-      alert("Please fill the form.");
-      return;
-    }
-
-    const signature = sigPadRef.current.getTrimmedCanvas().toDataURL("image/png");
     setLoading(true);
 
     try {
       const res = await fetch("/api/others/entree", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, signature }),
+        body: JSON.stringify({ ...formData}),
       });
       const data = await res.json();
       if (data.success) {
@@ -246,24 +236,6 @@ export default function OthersFormSlider() {
                   ))}
                 </div>
               </fieldset>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Signature</label>
-                <div className="w-full h-[200px] bg-gray-50 border border-gray-300 rounded-md overflow-hidden">
-                  <SignatureCanvas
-                    ref={sigPadRef}
-                    penColor="black"
-                    canvasProps={{ width: 500, height: 200, className: "w-full h-full" }}
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="w-full p-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
-                >
-                  CLEAR
-                </button>
-              </div>
 
               <button
                 type="submit"

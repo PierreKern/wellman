@@ -30,7 +30,7 @@ export default function LogistiqueSortieForm() {
     }
 
     setIsSubmitting(true);
-    const signature = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+    const signature = sigCanvas.current.toDataURL("image/png");
 
     try {
       const res = await fetch("/api/logistic/sortie", {

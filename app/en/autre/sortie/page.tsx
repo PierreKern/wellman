@@ -30,7 +30,7 @@ export default function OthersSortieForm() {
     if (!nom || !prenom || !entreprise) return alert("Veuillez remplir tous les champs.");
     if (sigPadRef.current?.isEmpty()) return alert("Veuillez signer le formulaire.");
 
-    const signatureImage = sigPadRef.current!.getTrimmedCanvas().toDataURL("image/png");
+    const signatureImage = sigPadRef.current!.toDataURL("image/png");
 
     setLoading(true);
     try {
@@ -68,8 +68,8 @@ export default function OthersSortieForm() {
         Please fill out this form :
       </h2>
       <form onSubmit={handleSubmit} className="w-[320px] space-y-4 mt-6">
-        <input type="text" name="nom" value={formData.nom} onChange={handleChange} placeholder="Last name" required className={inputStyle} />
-        <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} placeholder="First name" required className={inputStyle} />
+        <input type="text" name="nom" value={formData.nom} onChange={handleChange} placeholder="First name" required className={inputStyle} />
+        <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} placeholder="Last name" required className={inputStyle} />
         <input type="text" name="entreprise" value={formData.entreprise} onChange={handleChange} placeholder="Company" required className={inputStyle} />
 
         <div className="space-y-2">

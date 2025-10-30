@@ -1,8 +1,6 @@
-// app/api/logistic/sortie/route.ts
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 
-// Fonction utilitaire pour calculer le temps passé en heures/minutes/secondes
 function calculateTempsPasse(dateEntree: Date, dateSortie: Date) {
   const diffMs = dateSortie.getTime() - dateEntree.getTime();
   const hours = Math.floor(diffMs / 1000 / 60 / 60);
@@ -18,15 +16,13 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const { firstName, lastName, tractorRegistration } = body;
-
-    // On récupère la dernière entrée correspondante
     const logisticEntry = await prisma.logistic.findFirst({
       where: {
         firstName,
         lastName,
         tractorRegistration,
       },
-      orderBy: { dateEntree: "desc" }, // prend la plus récente
+      orderBy: { dateEntree: "desc" },
     });
 
     if (!logisticEntry) {
@@ -38,13 +34,12 @@ export async function POST(req: Request) {
 
     const dateSortie = new Date();
     const tempsPasse = calculateTempsPasse(logisticEntry.dateEntree, dateSortie);
-
     const updatedEntry = await prisma.logistic.update({
       where: { id: logisticEntry.id },
       data: {
-        // @ts-ignore
         dateSortie,
         tempsPasse,
+        signature: body.signature,
       },
     });
 

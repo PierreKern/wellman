@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import SignatureCanvas from "react-signature-canvas";
 import { useRouter } from "next/navigation";
 
 export default function LogistiqueSlider() {
@@ -23,7 +22,6 @@ export default function LogistiqueSlider() {
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<"intro" | "choix" | "postChoice" | "form" | "success">("intro");
   const [reason, setReason] = useState<string | null>(null);
-  const sigCanvas = useRef<SignatureCanvas | null>(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -60,7 +58,6 @@ export default function LogistiqueSlider() {
     return index === 0 ? postChoiceImagesByReason[reason] : postChoiceCommonImages[index - 1];
   };
 
-  const clearSignature = () => sigCanvas.current?.clear();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,18 +66,13 @@ export default function LogistiqueSlider() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sigCanvas.current || sigCanvas.current.isEmpty()) {
-      return;
-    }
-
     setIsSubmitting(true);
-    const signature = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
 
     try {
       const res = await fetch("/api/logistic/entree", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, selectedOption: reason, signature }),
+        body: JSON.stringify({ ...formData, selectedOption: reason }),
       });
       const data = await res.json();
       if (data.success) setSubmitted(true);
@@ -168,12 +160,6 @@ export default function LogistiqueSlider() {
           <input name="company" placeholder="Company" onChange={handleChange} className="border p-2 w-full text-black" required />
           <input name="tractorRegistration" placeholder="Tractor registration" onChange={handleChange} className="border p-2 w-full text-black" required />
           <input name="trailerRegistration" placeholder="Trailor registration" onChange={handleChange} className="border p-2 w-full text-black" required />
-
-          <div className="border p-2 rounded bg-white">
-            <SignatureCanvas ref={sigCanvas} penColor="black" canvasProps={{ className: "border w-full h-[150px] text-black" }} />
-            <button type="button" onClick={clearSignature} className="text-blue-600 mt-2">CLEAR</button>
-          </div>
-
           <button type="submit" disabled={isSubmitting} className="bg-[#1864ab] text-white w-full py-2 rounded">
             {isSubmitting ? "Sending..." : "Submit"}
           </button>
