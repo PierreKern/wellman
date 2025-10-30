@@ -87,9 +87,9 @@ export default function LogistiqueSortieForm() {
         />
         <input
           name="tractorRegistration"
-          placeholder="Tractor re"
+          placeholder="Tractor registration"
           onChange={handleChange}
-          className="Tractor registration"
+          className="border p-2 w-full text-black"
           required
         />
 

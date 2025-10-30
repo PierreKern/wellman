@@ -30,7 +30,7 @@ export default function LogistiquePage() {
         </button>
 
         <button
-          onClick={() => (window.location.href = "/")}
+          onClick={() => (window.location.href = "/en/logistique/sortie")}
           className="w-[400px] h-[180px] bg-[#1864ab] hover:bg-[#1c7ed6] text-white rounded-xl text-2xl font-semibold flex flex-col justify-center items-center transition-colors"
         >
           Exit
