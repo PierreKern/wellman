@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import SignatureCanvas from "react-signature-canvas";
-import Link from "next/link";
+import RgpdNotice from "@/app/components/Rgpd";
 
 export default function OthersSortieForm() {
   const router = useRouter();
@@ -66,10 +66,10 @@ export default function OthersSortieForm() {
       <div className="absolute top-10 left-1/2 -translate-x-1/2">
         <Image src="/indorama.jpeg" alt="Logo Indorama" width={250} height={100} className="object-contain" />
       </div>
-      <h2 className="text-2xl font-bold mb-6 text-center text-black">
+      <h2 className="text-2xl font-bold mt-35 text-center text-black">
         Merci de remplir le formulaire suivant :
       </h2>
-      <form onSubmit={handleSubmit} className="w-[320px] space-y-4 mt-6">
+      <form onSubmit={handleSubmit} className="w-[420px] space-y-4 mt-5">
         <input type="text" name="nom" value={formData.nom} onChange={handleChange} placeholder="Nom" required className={inputStyle} />
         <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} placeholder="Prénom" required className={inputStyle} />
         <input type="text" name="entreprise" value={formData.entreprise} onChange={handleChange} placeholder="Entreprise" required className={inputStyle} />
@@ -91,7 +91,7 @@ export default function OthersSortieForm() {
             Effacer
           </button>
         </div>
-
+        <RgpdNotice></RgpdNotice>
         <label htmlFor="rgpd" className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -101,10 +101,7 @@ export default function OthersSortieForm() {
           />
           <span className="text-black">
             J’ai lu et j’accepte les conditions de traitement de mes données
-            conformément à la{" "}
-            <Link  href="/confidentialite" className="text-blue-600 hover:underline font-medium">
-              politique de confidentialité
-            </Link>
+            conformément à la politique de confidentialité
           </span>
         </label>
 

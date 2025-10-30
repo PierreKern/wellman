@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import RgpdNotice from "@/app/components/Rgpd";
 
 export default function LogistiqueSlider() {
   const router = useRouter();
@@ -151,7 +151,7 @@ export default function LogistiqueSlider() {
       )}
 
       {phase === "form" && (
-        <form onSubmit={handleSubmit} className="w-[420px] space-y-4 mt-6">
+        <form onSubmit={handleSubmit} className="w-[420px] space-y-4 mt-30">
           <h2 className="text-2xl font-bold mb-6 text-center text-black">
             Merci de remplir ce formulaire :
           </h2>
@@ -160,7 +160,7 @@ export default function LogistiqueSlider() {
           <input name="company" placeholder="Entreprise" onChange={handleChange} className="border p-2 w-full text-black" required />
           <input name="tractorRegistration" placeholder="Immat. tracteur" onChange={handleChange} className="border p-2 w-full text-black" required />
           <input name="trailerRegistration" placeholder="Immat. remorque" onChange={handleChange} className="border p-2 w-full text-black" required />
-          <button type="submit" disabled={isSubmitting} className="bg-[#1864ab] text-white w-full py-2 rounded">
+          <RgpdNotice></RgpdNotice>
           <label htmlFor="rgpd" className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -170,12 +170,10 @@ export default function LogistiqueSlider() {
             />
             <span className="text-black">
               J’ai lu et j’accepte les conditions de traitement de mes données
-              conformément à la{" "}
-              <Link  href="/confidentialite" className="text-blue-600 hover:underline font-medium">
-                politique de confidentialité
-              </Link>
+              conformément à la politique de confidentialité
             </span>
           </label>
+          <button type="submit" disabled={isSubmitting} className="bg-[#1864ab] text-white w-full py-2 rounded">
             {isSubmitting ? "Envoi..." : "Envoyer"}
           </button>
         </form>

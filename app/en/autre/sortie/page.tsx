@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import SignatureCanvas from "react-signature-canvas";
-import Link from "next/link";
+import RgpdNoticeEN from "@/app/components/RgpdEN";
 
 export default function OthersSortieForm() {
   const router = useRouter();
@@ -65,7 +65,7 @@ export default function OthersSortieForm() {
       <div className="absolute top-10 left-1/2 -translate-x-1/2">
         <Image src="/indorama.jpeg" alt="Logo Indorama" width={250} height={100} className="object-contain" />
       </div>
-      <h2 className="text-2xl font-bold mb-6 text-center text-black">
+      <h2 className="text-2xl font-bold mt-30 text-center text-black">
         Please fill out this form :
       </h2>
       <form onSubmit={handleSubmit} className="w-[320px] space-y-4 mt-6">
@@ -90,6 +90,7 @@ export default function OthersSortieForm() {
             CLEAR
           </button>
         </div>
+        <RgpdNoticeEN></RgpdNoticeEN>
         <label htmlFor="rgpd" className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -98,10 +99,7 @@ export default function OthersSortieForm() {
             className="form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
           <span className="text-black">
-            I have read and accept the terms and conditions for the processing of my data in accordance with{" "}
-            <Link  href="/confidentialite" className="text-blue-600 hover:underline font-medium">
-              the privacy policy
-            </Link>
+            I have read and accept the terms and conditions for the processing of my data in accordance with the privacy policy
           </span>
         </label>
 

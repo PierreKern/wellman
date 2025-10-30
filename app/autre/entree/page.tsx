@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SignatureCanvas from "react-signature-canvas";
-import Link from "next/link";
+import RgpdNotice from "@/app/components/Rgpd";
 
 const CONTACTS_WELLMAN = [
   "BREDARD Sébastien",
@@ -243,7 +243,7 @@ export default function OthersFormSlider() {
                 required
                 className={inputStyle}
               />
-
+            <RgpdNotice></RgpdNotice>
             <label htmlFor="rgpd" className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
@@ -253,10 +253,7 @@ export default function OthersFormSlider() {
               />
               <span className="text-black">
                 J’ai lu et j’accepte les conditions de traitement de mes données
-                conformément à la{" "}
-                <Link  href="/confidentialite" className="text-blue-600 hover:underline font-medium">
-                  politique de confidentialité
-                </Link>
+                conformément à la politique de confidentialité
               </span>
             </label>
 

@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import SignatureCanvas from "react-signature-canvas";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import RgpdNoticeEn from "@/app/components/RgpdEN";
 
 export default function LogistiqueSortieForm() {
   const router = useRouter();
@@ -69,8 +69,8 @@ export default function LogistiqueSortieForm() {
           className="object-contain"
         />
       </div>
-      <h2 className="text-black text-lg mt-4">Please fill out this form :</h2>
-      <form onSubmit={handleSubmit} className="w-[320px] space-y-4 mt-6">
+      <h2 className="text-black text-lg mt-30">Please fill out this form :</h2>
+      <form onSubmit={handleSubmit} className="w-[420px] space-y-4 mt-6">
         <input
           name="firstName"
           placeholder="First name"
@@ -107,6 +107,7 @@ export default function LogistiqueSortieForm() {
             CLEAR
           </button>
         </div>
+        <RgpdNoticeEn></RgpdNoticeEn>
         <label htmlFor="rgpd" className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -115,10 +116,7 @@ export default function LogistiqueSortieForm() {
             className="form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
           <span className="text-black">
-            I have read and accept the terms and conditions for the processing of my data in accordance with{" "}
-            <Link  href="/confidentialite" className="text-blue-600 hover:underline font-medium">
-              the privacy policy
-            </Link>
+            I have read and accept the terms and conditions for the processing of my data in accordance with the privacy policy
           </span>
           </label>
         <button
