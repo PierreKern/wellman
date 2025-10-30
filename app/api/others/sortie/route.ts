@@ -1,7 +1,6 @@
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 
-// Fonction utilitaire pour calculer le temps passé en heures et minutes
 function calculateTempsPasse(dateEntree: Date, dateSortie: Date) {
   const diffMs = dateSortie.getTime() - dateEntree.getTime();
   const hours = Math.floor(diffMs / 1000 / 60 / 60);

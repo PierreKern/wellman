@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SignatureCanvas from "react-signature-canvas";
+import Link from "next/link";
 
 const CONTACTS_WELLMAN = [
   "BREDARD Sébastien",
@@ -231,6 +232,7 @@ export default function OthersFormSlider() {
                   ))}
                 </div>
               </fieldset>
+
               <input
                 type="number"
                 name="nbrPersonnes"
@@ -241,6 +243,22 @@ export default function OthersFormSlider() {
                 required
                 className={inputStyle}
               />
+
+            <label htmlFor="rgpd" className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                id="rgpd"
+                required
+                className="form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <span className="text-black">
+                J’ai lu et j’accepte les conditions de traitement de mes données
+                conformément à la{" "}
+                <Link  href="/confidentialite" className="text-blue-600 hover:underline font-medium">
+                  politique de confidentialité
+                </Link>
+              </span>
+            </label>
 
               <button
                 type="submit"

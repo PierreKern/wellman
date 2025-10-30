@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "@material-tailwind/react";
 
 export default function HomeFR() {
-  const router = useRouter();
+  const router = useRouter(); 
 
   return (
     <main className="relative flex flex-col items-center justify-center h-screen">

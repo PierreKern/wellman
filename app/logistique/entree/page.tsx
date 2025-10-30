@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LogistiqueSlider() {
   const router = useRouter();
@@ -160,6 +161,21 @@ export default function LogistiqueSlider() {
           <input name="tractorRegistration" placeholder="Immat. tracteur" onChange={handleChange} className="border p-2 w-full text-black" required />
           <input name="trailerRegistration" placeholder="Immat. remorque" onChange={handleChange} className="border p-2 w-full text-black" required />
           <button type="submit" disabled={isSubmitting} className="bg-[#1864ab] text-white w-full py-2 rounded">
+          <label htmlFor="rgpd" className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              id="rgpd"
+              required
+              className="form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span className="text-black">
+              J’ai lu et j’accepte les conditions de traitement de mes données
+              conformément à la{" "}
+              <Link  href="/confidentialite" className="text-blue-600 hover:underline font-medium">
+                politique de confidentialité
+              </Link>
+            </span>
+          </label>
             {isSubmitting ? "Envoi..." : "Envoyer"}
           </button>
         </form>
