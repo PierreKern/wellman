@@ -14,7 +14,6 @@ export default function RgpdNotice() {
         traitement de votre demande.
       </p>
       <p>
-        {/* J'ai corrigé la petite coquille [durée de conservation...] */}
         Vos données sont conservées pendant 24 mois après le dernier contact, et
         sont uniquement accessibles par les personnes habilitées de Sacha Katic.
       </p>
@@ -23,7 +22,6 @@ export default function RgpdNotice() {
         et à la loi Informatique et Libertés, vous pouvez exercer vos droits
         d’accès, de rectification, de suppression, de limitation ou
         d’opposition en contactant :
-        {/* Un lien mailto: est idéal ici */}
         <a
           href="mailto:Contact-rgpg@fr.indorama.net"
           className="text-blue-600 hover:underline ml-1"
