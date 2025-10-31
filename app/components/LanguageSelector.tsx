@@ -14,7 +14,6 @@ export default function LanguageSelector() {
     { code: "pl", label: "Polski", flag: "🇵🇱" },
     { code: "lt", label: "Lietuvių", flag: "🇱🇹" },
     { code: "ro", label: "Română", flag: "🇷🇴" },
-    { code: "ru", label: "Русский", flag: "🇷🇺" },
   ];
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
