@@ -1,45 +1,57 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
-export default function LogisticTable({ data }: { data: any[] }) {
-  const [search, setSearch] = useState("");
-  const [filterCompany, setFilterCompany] = useState("");
-  const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      const matchSearch =
-        item.firstName.toLowerCase().includes(search.toLowerCase()) ||
-        item.lastName.toLowerCase().includes(search.toLowerCase()) ||
-        item.company.toLowerCase().includes(search.toLowerCase()) ||
-        item.tractorRegistration?.toLowerCase().includes(search.toLowerCase()) ||
-        item.trailerRegistration?.toLowerCase().includes(search.toLowerCase());
+export default function LogisticTable({
+  data,
+  totalPages,
+  currentPage,
+  companies,
+  search,
+  companyFilter,
+}: {
+  data: any[];
+  totalPages: number;
+  currentPage: number;
+  companies: string[];
+  search: string;
+  companyFilter: string;
+}) {
+  const router = useRouter();
+  const [searchInput, setSearchInput] = useState(search);
+  const [companyInput, setCompanyInput] = useState(companyFilter);
 
-      const matchCompany = filterCompany
-        ? item.company === filterCompany
-        : true;
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchInput) params.set("search", searchInput);
+    if (companyInput) params.set("company", companyInput);
+    params.set("page", "1");
+    const timer = setTimeout(() => {
+      router.push(`?${params.toString()}`);
+    }, 400);
 
-      return matchSearch && matchCompany;
-    });
-  }, [data, search, filterCompany]);
-  const companyList = Array.from(new Set(data.map((d) => d.company))).sort();
+    return () => clearTimeout(timer);
+  }, [searchInput, companyInput]);
+
   return (
     <div className="overflow-x-auto bg-white shadow-md rounded-lg p-4">
       <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
         <input
           type="text"
           placeholder="Rechercher (nom, entreprise, immat...)"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           className="border border-gray-300 rounded-md px-4 py-2 text-sm w-full sm:w-1/2 text-black"
         />
 
         <select
-          value={filterCompany}
-          onChange={(e) => setFilterCompany(e.target.value)}
+          value={companyInput}
+          onChange={(e) => setCompanyInput(e.target.value)}
           className="border border-gray-300 rounded-md px-4 py-2 text-sm text-black"
         >
           <option value="">Toutes les entreprises</option>
-          {companyList.map((c) => (
+          {companies.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -47,7 +59,6 @@ export default function LogisticTable({ data }: { data: any[] }) {
         </select>
       </div>
 
-      {/* 🧾 Tableau filtré */}
       <table className="min-w-full border border-gray-200 text-sm">
         <thead className="bg-[#1864ab] text-white">
           <tr>
@@ -64,8 +75,8 @@ export default function LogisticTable({ data }: { data: any[] }) {
           </tr>
         </thead>
         <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((o) => (
+          {data.length > 0 ? (
+            data.map((o) => (
               <tr key={o.id} className="border-t border-gray-200">
                 <td className="p-3 text-black">{o.firstName}</td>
                 <td className="p-3 text-black">{o.lastName}</td>
@@ -102,6 +113,36 @@ export default function LogisticTable({ data }: { data: any[] }) {
           )}
         </tbody>
       </table>
+
+      <div className="flex justify-center items-center gap-4 mt-6">
+        <button
+          disabled={currentPage <= 1}
+          onClick={() =>
+            router.push(
+              `?page=${currentPage - 1}&search=${searchInput}&company=${companyInput}`
+            )
+          }
+          className="px-4 py-2 rounded-md border text-blue-600 border-blue-300 disabled:text-gray-400 disabled:border-gray-200"
+        >
+          ◀ Précédent
+        </button>
+
+        <span className="text-gray-700">
+          Page {currentPage} / {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage >= totalPages}
+          onClick={() =>
+            router.push(
+              `?page=${currentPage + 1}&search=${searchInput}&company=${companyInput}`
+            )
+          }
+          className="px-4 py-2 rounded-md border text-blue-600 border-blue-300 disabled:text-gray-400 disabled:border-gray-200"
+        >
+          Suivant ▶
+        </button>
+      </div>
     </div>
   );
 }

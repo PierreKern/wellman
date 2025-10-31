@@ -38,7 +38,7 @@ export default function OthersSortieForm() {
       const res = await fetch("/api/others/sortie", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName: nom, lastName: prenom, company: entreprise, signature: signatureImage }),
+        body: JSON.stringify({ firstName: prenom, lastName: nom, company: entreprise, signature: signatureImage }),
       });
       const data = await res.json();
       if (data.success) {
@@ -70,8 +70,8 @@ export default function OthersSortieForm() {
         Merci de remplir le formulaire suivant :
       </h2>
       <form onSubmit={handleSubmit} className="w-[420px] space-y-4 mt-5">
-        <input type="text" name="nom" value={formData.nom} onChange={handleChange} placeholder="Nom" required className={inputStyle} />
         <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} placeholder="Prénom" required className={inputStyle} />
+        <input type="text" name="nom" value={formData.nom} onChange={handleChange} placeholder="Nom" required className={inputStyle} />
         <input type="text" name="entreprise" value={formData.entreprise} onChange={handleChange} placeholder="Entreprise" required className={inputStyle} />
 
         <div className="space-y-2">

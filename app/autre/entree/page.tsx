@@ -133,7 +133,7 @@ export default function OthersFormSlider() {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="Nom"
+                  placeholder="Prénom"
                   required
                   className={inputStyle}
                 />
@@ -141,7 +141,7 @@ export default function OthersFormSlider() {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Prénom"
+                  placeholder="Nom"
                   required
                   className={inputStyle}
                 />
