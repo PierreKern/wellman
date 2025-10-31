@@ -10,7 +10,7 @@ export default function LanguageSelector() {
     { code: "de", label: "Deutsch", flag: "🇩🇪" },
     { code: "es", label: "Español", flag: "🇪🇸" },
     { code: "it", label: "Italiano", flag: "🇮🇹" },
-    { code: "pt", label: "Português", flag: "🇵🇹" },
+    { code: "po", label: "Português", flag: "🇵🇹" },
     { code: "pl", label: "Polski", flag: "🇵🇱" },
     { code: "lt", label: "Lietuvių", flag: "🇱🇹" },
     { code: "ro", label: "Română", flag: "🇷🇴" },
