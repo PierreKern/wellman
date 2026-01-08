@@ -7,7 +7,7 @@ import RgpdNoticePO from "@/app/components/RgpdPO";
 
 export default function LogistiqueSlider() {
   const router = useRouter();
-  const introImages = ["/EN_iso.png", "/EN_interdictions.png", "/EN_obligations.png"];
+  const introImages = ["/EN_iso.png", "/EN_interdictions.png", "/EN_obligations.png", "/EN_environnement.png"];
   const postChoiceImagesByReason: Record<string, string> = {
     dechargement: "/EN_obligation_dechargement.png",
     depotage: "/EN_obligations_acces.png",
