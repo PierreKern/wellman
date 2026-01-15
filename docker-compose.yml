@@ -5,9 +5,9 @@ services:
     image: postgres:15-alpine
     container_name: logistic-db
     environment:
-      POSTGRES_USER: wellman
-      POSTGRES_PASSWORD: wellman
-      POSTGRES_DB: wellmandb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     ports:
@@ -20,9 +20,9 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://wellman:wellman@db:5432/wellmandb
-      NEXTAUTH_SECRET: "qdjDZQG356VSsefa4"
-      NEXTAUTH_URL: "http://localhost:3000"
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
     ports:
       - "3000:3000"
     depends_on:
