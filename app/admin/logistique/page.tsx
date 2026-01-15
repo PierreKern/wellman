@@ -1,28 +1,38 @@
 import { prisma } from "@/app/lib/prisma";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
-import Link from "next/link";
+import { authOptions } from "@/app/lib/authOptions";
+import Link from "next/link"; // <--- C'était la ligne manquante !
 import LogoutButton from "@/app/components/LogoutButton";
 import LogisticTable from "@/app/components/LogisticTable";
 
-interface SearchParams {
-  searchParams?: {
+// 1. Définition du type en Promise
+interface AdminPageProps {
+  searchParams: Promise<{
     page?: string;
     search?: string;
     company?: string;
-  };
+  }>;
 }
 
-export default async function AdminPage({ searchParams }: SearchParams) {
+// 2. On change la signature pour accepter "props"
+export default async function AdminPage(props: AdminPageProps) {
   const session = await getServerSession(authOptions);
-  if (!session)
+  
+  if (!session) {
     redirect("/login");
+  }
 
-  const page = parseInt(searchParams?.page || "1", 10);
+  // 3. On "await" les searchParams avant de les lire
+  const searchParams = await props.searchParams;
+
+  const page = parseInt(searchParams.page || "1", 10);
   const perPage = 50;
-  const search = searchParams?.search?.trim() || "";
-  const company = searchParams?.company?.trim() || "";
+  
+  // Utilisation de la version "awaited"
+  const search = searchParams.search?.trim() || "";
+  const company = searchParams.company?.trim() || "";
+  
   const where: any = {};
 
   if (search) {
@@ -34,17 +44,21 @@ export default async function AdminPage({ searchParams }: SearchParams) {
       { trailerRegistration: { contains: search, mode: "insensitive" } },
     ];
   }
+  
   if (company) {
     where.company = { equals: company, mode: "insensitive" };
   }
+
   const totalCount = await prisma.logistic.count({ where });
   const totalPages = Math.max(1, Math.ceil(totalCount / perPage));
+  
   const logistics = await prisma.logistic.findMany({
     where,
     orderBy: { dateEntree: "desc" },
     skip: (page - 1) * perPage,
     take: perPage,
   });
+
   const companies = await prisma.logistic.findMany({
     select: { company: true },
     distinct: ["company"],
