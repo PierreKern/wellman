@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: logistic-db
+    environment:
+      POSTGRES_USER: wellman
+      POSTGRES_PASSWORD: wellman
+      POSTGRES_DB: wellmandb
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" 
+    restart: always
+
+  app:
+    container_name: logistic-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://wellman:wellman@db:5432/wellmandb
+      NEXTAUTH_SECRET: "qdjDZQG356VSsefa4"
+      NEXTAUTH_URL: "http://localhost:3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    restart: always
