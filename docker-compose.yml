@@ -10,9 +10,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432" 
-    restart: always
+    restart: unless-stopped
+    networks:
+      - internal
 
   app:
     container_name: logistic-app
@@ -23,8 +23,22 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
-    ports:
-      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.indoramatablettes.rule=Host(`${INDORAMA_TABLETTES_HOST}`)"
+      - "traefik.http.routers.indoramatablettes.entrypoints=websecure"
+      - "traefik.http.routers.indoramatablettes.tls.certresolver=tlsresolver"
+      - "traefik.http.services.indoramatablettes.loadbalancer.server.port=3000"
     depends_on:
       - db
-    restart: always
+    restart: unless-stopped
+    networks:
+      - web
+      - internal
+
+networks:
+  web:
+    external: true
+  internal:
+    driver: bridge
