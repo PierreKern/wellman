@@ -24,12 +24,12 @@ export default function OthersFormSlider() {
   const router = useRouter();
   const images = [
     "/FR_certif.png",
+    "/FR_environnement.png",
     "/FR_regle_secu.png",
     "/FR_plan.png",
     "/FR_obligations.png",
     "/FR_interdictions.png",
     "/FR_deversement.png",
-    "/FR_environnement.png"
   ];
 
   const [index, setIndex] = useState(0);
