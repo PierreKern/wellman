@@ -3,18 +3,19 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import RgpdNotice from "@/app/components/Rgpd";
 import RgpdNoticeEN from "@/app/components/RgpdEN";
 
 export default function LogistiqueSlider() {
   const router = useRouter();
   const introImages = ["/EN_iso.png", "/EN_environnement.png", "/EN_interdictions.png", "/EN_obligations.png"];
+  
   const postChoiceImagesByReason: Record<string, string> = {
     dechargement: "/EN_obligation_dechargement.png",
     depotage: "/EN_obligations_acces.png",
     quai: "/EN_obligation_dechargement.png",
     expedition: "/EN_obligation_dechargement.png",
   };
+  
   const postChoiceCommonImages = [
     "/EN_obligations_chauffeur.png",
     "/EN_deversement.png",
@@ -23,7 +24,10 @@ export default function LogistiqueSlider() {
 
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<"intro" | "choix" | "postChoice" | "form" | "success">("intro");
-  const [reason, setReason] = useState<string | null>(null);
+  
+  // Initialized to empty string for "empty choice" handling
+  const [reason, setReason] = useState<string>(""); 
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -43,23 +47,37 @@ export default function LogistiqueSlider() {
     else setPhase("choix");
   };
 
+  // Case 1: Specific choice selected
   const handleSelectReason = (r: string) => {
     setReason(r);
     setPhase("postChoice");
     setIndex(0);
   };
 
+  // Case 2: Skip choice (sends empty string)
+  const handleSkipChoice = () => {
+    setReason(""); 
+    setPhase("postChoice");
+    setIndex(0);
+  };
+
   const handleNextPostChoice = () => {
-    const totalSlides = 1 + postChoiceCommonImages.length;
+    // If reason exists: 1 specific image + common images
+    // If reason is empty: only common images
+    const totalSlides = reason ? 1 + postChoiceCommonImages.length : postChoiceCommonImages.length;
+    
     if (index < totalSlides - 1) setIndex(index + 1);
     else setPhase("form");
   };
 
   const getPostChoiceImage = () => {
-    if (!reason) return "";
-    return index === 0 ? postChoiceImagesByReason[reason] : postChoiceCommonImages[index - 1];
+    if (reason) {
+      return index === 0 ? postChoiceImagesByReason[reason] : postChoiceCommonImages[index - 1];
+    } else {
+      // If empty reason, start directly with common images
+      return postChoiceCommonImages[index];
+    }
   };
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -119,23 +137,38 @@ export default function LogistiqueSlider() {
       )}
 
       {phase === "choix" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {[
-            { id: "dechargement", img: "/dechargement.png", label: "Truck loading/unloading" },
-            { id: "depotage", img: "/granule.jpg", label: "Granule unloading" },
-            { id: "quai", img: "/quai.jpg", label: "Unloading at the dock" },
-            { id: "expedition", img: "/expedition.png", label: "Unloading/Shipping chemical/hazardous waste " },
-          ].map(r => (
-            <button key={r.id} onClick={() => handleSelectReason(r.id)}
-              className="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition-transform">
-              <Image src={r.img} alt={r.label} width={250} height={180} className="object-contain" />
-              <p className="mt-2 font-semibold text-black">{r.label}</p>
-            </button>
-          ))}
+        <div className="flex flex-col items-center w-full max-w-4xl mt-12">
+          {/* English Title */}
+          <h2 className="text-2xl font-bold mb-8 text-center text-black uppercase tracking-wide">
+            Choose the reason for your visit
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            {[
+              { id: "dechargement", img: "/dechargement.png", label: "Truck loading/unloading" },
+              { id: "depotage", img: "/granule.jpg", label: "Granule unloading" },
+              { id: "quai", img: "/quai.jpg", label: "Unloading at the dock" },
+              { id: "expedition", img: "/expedition.png", label: "Unloading/Shipping chemical/hazardous waste" },
+            ].map(r => (
+              <button key={r.id} onClick={() => handleSelectReason(r.id)}
+                className="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition-transform flex flex-col items-center">
+                <Image src={r.img} alt={r.label} width={250} height={180} className="object-contain h-48 w-auto" />
+                <p className="mt-2 font-semibold text-black text-center">{r.label}</p>
+              </button>
+            ))}
+          </div>
+
+          {/* Generic Next Button */}
+          <button 
+            onClick={handleSkipChoice} 
+            className="bg-[#1864ab] text-white rounded-xl px-12 py-3 mt-10 hover:bg-blue-800 transition-colors font-semibold text-lg"
+          >
+            Next 
+          </button>
         </div>
       )}
 
-      {phase === "postChoice" && reason && (
+      {phase === "postChoice" && (
         <>
           <Image
             key={getPostChoiceImage()}
@@ -152,7 +185,6 @@ export default function LogistiqueSlider() {
       )}
 
       {phase === "form" && (
-        
         <form onSubmit={handleSubmit} className="w-[420px] space-y-4 mt-30">
             <h2 className="text-2xl font-bold mb-6 text-center text-black">
               Please fill out this form :

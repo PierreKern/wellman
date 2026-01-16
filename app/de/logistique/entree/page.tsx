@@ -8,12 +8,14 @@ import RgpdNoticeDE from "@/app/components/RgpdDE";
 export default function LogistiqueSlider() {
   const router = useRouter();
   const introImages = ["/DE/DE_iso.png", "/EN_environnement.png", "/DE/DE_interdictions.png", "/DE/DE_obligations.png"];
+  
   const postChoiceImagesByReason: Record<string, string> = {
     dechargement: "/DE/DE_dechargement.png",
     depotage: "/DE/acces.png",
     quai: "/DE/DE_dechargement.png",
     expedition: "/DE/DE_dechargement.png",
   };
+  
   const postChoiceCommonImages = [
     "/DE/obligations_chauffeur.png",
     "/DE/deversement.png",
@@ -22,7 +24,10 @@ export default function LogistiqueSlider() {
 
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<"intro" | "choix" | "postChoice" | "form" | "success">("intro");
-  const [reason, setReason] = useState<string | null>(null);
+  
+  // Initialisé à "" (chaîne vide) pour gérer le choix vide
+  const [reason, setReason] = useState<string>(""); 
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -42,21 +47,36 @@ export default function LogistiqueSlider() {
     else setPhase("choix");
   };
 
+  // Cas 1 : Choix spécifique
   const handleSelectReason = (r: string) => {
     setReason(r);
     setPhase("postChoice");
     setIndex(0);
   };
 
+  // Cas 2 : Passer sans choisir (envoie vide)
+  const handleSkipChoice = () => {
+    setReason(""); 
+    setPhase("postChoice");
+    setIndex(0);
+  };
+
   const handleNextPostChoice = () => {
-    const totalSlides = 1 + postChoiceCommonImages.length;
+    // Si raison choisie : 1 image spécifique + images communes
+    // Si pas de raison : juste les images communes
+    const totalSlides = reason ? 1 + postChoiceCommonImages.length : postChoiceCommonImages.length;
+    
     if (index < totalSlides - 1) setIndex(index + 1);
     else setPhase("form");
   };
 
   const getPostChoiceImage = () => {
-    if (!reason) return "";
-    return index === 0 ? postChoiceImagesByReason[reason] : postChoiceCommonImages[index - 1];
+    if (reason) {
+      return index === 0 ? postChoiceImagesByReason[reason] : postChoiceCommonImages[index - 1];
+    } else {
+      // Si vide, on commence directement par les images communes
+      return postChoiceCommonImages[index];
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,23 +138,38 @@ export default function LogistiqueSlider() {
       )}
 
       {phase === "choix" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {[
-            { id: "dechargement", img: "/dechargement.png", label: "Be- und Entladen" },
-            { id: "depotage", img: "/granule.jpg", label: "Entnahme von Granulat" },
-            { id: "quai", img: "/quai.jpg", label: "Entladen am Kai" },
-            { id: "expedition", img: "/expedition.png", label: "Versand gefährlicher Güter" },
-          ].map(r => (
-            <button key={r.id} onClick={() => handleSelectReason(r.id)}
-              className="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition-transform">
-              <Image src={r.img} alt={r.label} width={250} height={180} className="object-contain" />
-              <p className="mt-2 font-semibold text-black">{r.label}</p>
-            </button>
-          ))}
+        <div className="flex flex-col items-center w-full max-w-4xl mt-12">
+           {/* Titre allemand */}
+           <h2 className="text-2xl font-bold mb-8 text-center text-black uppercase tracking-wide">
+            Wählen Sie den Grund für Ihren Besuch
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            {[
+              { id: "dechargement", img: "/dechargement.png", label: "Be- und Entladen" },
+              { id: "depotage", img: "/granule.jpg", label: "Entnahme von Granulat" },
+              { id: "quai", img: "/quai.jpg", label: "Entladen am Kai" },
+              { id: "expedition", img: "/expedition.png", label: "Versand gefährlicher Güter" },
+            ].map(r => (
+              <button key={r.id} onClick={() => handleSelectReason(r.id)}
+                className="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition-transform flex flex-col items-center">
+                <Image src={r.img} alt={r.label} width={250} height={180} className="object-contain h-48 w-auto" />
+                <p className="mt-2 font-semibold text-black text-center">{r.label}</p>
+              </button>
+            ))}
+          </div>
+
+          {/* Bouton Suivant pour envoyer champ vide */}
+          <button 
+            onClick={handleSkipChoice} 
+            className="bg-[#1864ab] text-white rounded-xl px-12 py-3 mt-10 hover:bg-blue-800 transition-colors font-semibold text-lg"
+          >
+            Folgend 
+          </button>
         </div>
       )}
 
-      {phase === "postChoice" && reason && (
+      {phase === "postChoice" && (
         <>
           <Image
             key={getPostChoiceImage()}

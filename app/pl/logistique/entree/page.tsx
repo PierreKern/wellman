@@ -8,12 +8,14 @@ import RgpdNoticePL from "@/app/components/RgpdPL";
 export default function LogistiqueSlider() {
   const router = useRouter();
   const introImages = ["/PL/iso.png", "/EN_environnement.png", "/PL/interdictions.png", "/PL/obligations.png"];
+  
   const postChoiceImagesByReason: Record<string, string> = {
     dechargement: "/PL/dechargement.png",
     depotage: "/PL/acces.png",
     quai: "/PL/dechargement.png",
     expedition: "/PL/dechargement.png",
   };
+  
   const postChoiceCommonImages = [
     "/PL/chauffeur.png",
     "/PL/deversement.png",
@@ -22,7 +24,10 @@ export default function LogistiqueSlider() {
 
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<"intro" | "choix" | "postChoice" | "form" | "success">("intro");
-  const [reason, setReason] = useState<string | null>(null);
+  
+  // Initialisé à "" (chaîne vide) pour gérer le choix vide
+  const [reason, setReason] = useState<string>(""); 
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -42,21 +47,36 @@ export default function LogistiqueSlider() {
     else setPhase("choix");
   };
 
+  // Cas 1 : Choix spécifique
   const handleSelectReason = (r: string) => {
     setReason(r);
     setPhase("postChoice");
     setIndex(0);
   };
 
+  // Cas 2 : Passer sans choisir (envoie vide)
+  const handleSkipChoice = () => {
+    setReason(""); 
+    setPhase("postChoice");
+    setIndex(0);
+  };
+
   const handleNextPostChoice = () => {
-    const totalSlides = 1 + postChoiceCommonImages.length;
+    // Si raison choisie : 1 image spécifique + images communes
+    // Si pas de raison : juste les images communes
+    const totalSlides = reason ? 1 + postChoiceCommonImages.length : postChoiceCommonImages.length;
+    
     if (index < totalSlides - 1) setIndex(index + 1);
     else setPhase("form");
   };
 
   const getPostChoiceImage = () => {
-    if (!reason) return "";
-    return index === 0 ? postChoiceImagesByReason[reason] : postChoiceCommonImages[index - 1];
+    if (reason) {
+      return index === 0 ? postChoiceImagesByReason[reason] : postChoiceCommonImages[index - 1];
+    } else {
+      // Si vide, on commence directement par les images communes
+      return postChoiceCommonImages[index];
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,23 +138,38 @@ export default function LogistiqueSlider() {
       )}
 
       {phase === "choix" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {[
-            { id: "dechargement", img: "/dechargement.png", label: "Załadunek/rozładunek ciężarówki" },
-            { id: "depotage", img: "/granule.jpg", label: "Rozładunek granulatu" },
-            { id: "quai", img: "/quai.jpg", label: "Rozładunek na nabrzeżui" },
-            { id: "expedition", img: "/expedition.png", label: "Rozładunek/wywóz chemikaliów/odpadów niebezpiecznych" },
-          ].map(r => (
-            <button key={r.id} onClick={() => handleSelectReason(r.id)}
-              className="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition-transform">
-              <Image src={r.img} alt={r.label} width={250} height={180} className="object-contain" />
-              <p className="mt-2 font-semibold text-black">{r.label}</p>
-            </button>
-          ))}
+        <div className="flex flex-col items-center w-full max-w-4xl mt-12">
+          {/* Titre polonais */}
+          <h2 className="text-2xl font-bold mb-8 text-center text-black uppercase tracking-wide">
+            Wybierz powód swojej wizyty
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            {[
+              { id: "dechargement", img: "/dechargement.png", label: "Załadunek/rozładunek ciężarówki" },
+              { id: "depotage", img: "/granule.jpg", label: "Rozładunek granulatu" },
+              { id: "quai", img: "/quai.jpg", label: "Rozładunek na nabrzeżui" },
+              { id: "expedition", img: "/expedition.png", label: "Rozładunek/wywóz chemikaliów/odpadów niebezpiecznych" },
+            ].map(r => (
+              <button key={r.id} onClick={() => handleSelectReason(r.id)}
+                className="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition-transform flex flex-col items-center">
+                <Image src={r.img} alt={r.label} width={250} height={180} className="object-contain h-48 w-auto" />
+                <p className="mt-2 font-semibold text-black text-center">{r.label}</p>
+              </button>
+            ))}
+          </div>
+
+          {/* Bouton Suivant pour envoyer champ vide */}
+          <button 
+            onClick={handleSkipChoice} 
+            className="bg-[#1864ab] text-white rounded-xl px-12 py-3 mt-10 hover:bg-blue-800 transition-colors font-semibold text-lg"
+          >
+            Następny 
+          </button>
         </div>
       )}
 
-      {phase === "postChoice" && reason && (
+      {phase === "postChoice" && (
         <>
           <Image
             key={getPostChoiceImage()}
@@ -174,13 +209,13 @@ export default function LogistiqueSlider() {
             </span>
           </label>
           <button type="submit" disabled={isSubmitting} className="bg-[#1864ab] text-white w-full py-2 rounded">
-            {isSubmitting ? "Envoi..." : "Wyślij"}
+            {isSubmitting ? "Wysyłanie..." : "Wyślij"}
           </button>
         </form>
       )}
 
       {phase === "success" && (
-        <div className="text-green-600 text-xl font-bold mt-4">Enregistré avec succès !</div>
+        <div className="text-green-600 text-xl font-bold mt-4">Zarejestrowano pomyślnie!</div>
       )}
     </main>
   );
